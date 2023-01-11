@@ -70,9 +70,12 @@ fi
 
 # download binary
 cd $HOME
-curl -L https://lava-binary-upgrades.s3.amazonaws.com/testnet/v0.4.0/lavad > lavad
-chmod +x lavad
-sudo mv lavad /usr/local/bin/lavad
+rm -rf lava
+git clone https://github.com/lavanet/lava
+cd lava
+git checkout v0.4.3
+make install
+lavad version
 
 # config
 lavad config chain-id $LAVA_CHAIN_ID
