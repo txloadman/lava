@@ -71,7 +71,7 @@ fi
 # download binary
 cd $HOME
 rm -rf lava
-git clone https://github.com/lavanet/lava
+git clone https://github.com/lavanet/lava.git
 cd lava
 git checkout v0.4.4
 make install
