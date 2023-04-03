@@ -124,10 +124,8 @@ LimitNOFILE=10000
 WantedBy=multi-user.target
 EOF
 
-lavad tendermint unsafe-reset-all --home $HOME/.lava --keep-addr-book
-
-SNAP_NAME=$(curl -s https://snapshots1-testnet.nodejumper.io/lava-testnet/ | egrep -o ">lava-testnet-1.*\.tar.lz4" | tr -d ">")
-curl https://snapshots1-testnet.nodejumper.io/lava-testnet/${SNAP_NAME} | lz4 -dc - | tar -xf - -C $HOME/.lava
+lavad tendermint unsafe-reset-all --home $HOME/.lava --keep-addr-book 
+curl https://snapshots1-testnet.nodejumper.io/lava-testnet/lava-testnet-1_2023-04-03.tar.lz4 | lz4 -dc - | tar -xf - -C $HOME/.lava
 
 # start service
 sudo systemctl daemon-reload
