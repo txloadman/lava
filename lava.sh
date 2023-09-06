@@ -72,7 +72,7 @@ cd $HOME
 rm -rf lava
 git clone https://github.com/lavanet/lava.git
 cd lava
-git checkout v0.21.1.2
+git checkout v0.22.0
 make install
 lavad version
 
