@@ -72,7 +72,7 @@ cd $HOME
 rm -rf lava
 git clone https://github.com/lavanet/lava.git
 cd lava
-git checkout v0.22.0
+git checkout v0.23.5
 make install
 lavad version
 
@@ -136,7 +136,7 @@ WantedBy=multi-user.target
 EOF
 
 lavad tendermint unsafe-reset-all --home $HOME/.lava --keep-addr-book 
-curl https://snapshots-testnet.nodejumper.io/lava-testnet/lava-testnet-2_2023-09-07.tar.lz4 | lz4 -dc - | tar -xf - -C $HOME/.lava
+curl https://snapshots-testnet.nodejumper.io/lava-testnet/lava-testnet-2_2023-09-20.tar.lz4 | lz4 -dc - | tar -xf - -C $HOME/.lava
 
 # start service
 sudo systemctl daemon-reload
