@@ -136,7 +136,7 @@ WantedBy=multi-user.target
 EOF
 
 lavad tendermint unsafe-reset-all --home $HOME/.lava --keep-addr-book 
-curl https://snapshots-testnet.nodejumper.io/lava-testnet/snapshot_latest.tar.lz4 | lz4 -dc - | tar -xf - -C $HOME/.lava
+curl https://snapshots-testnet.nodejumper.io/lava-testnet/lava-testnet_latest.tar.lz4 | lz4 -dc - | tar -xf - -C $HOME/.lava
 
 # start service
 sudo systemctl daemon-reload
