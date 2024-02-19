@@ -68,13 +68,10 @@ source $HOME/.bash_profile
 fi
 
 # download binary
-cd $HOME
-rm -rf lava
-git clone https://github.com/lavanet/lava.git
+cd && rm -rf lava
+git clone https://github.com/lavanet/lava
 cd lava
 git checkout v0.35.0
-make install
-lavad version
 
 # config
 lavad config chain-id $LAVA_CHAIN_ID
@@ -84,15 +81,15 @@ lavad config keyring-backend test
 lavad init $NODENAME --chain-id $LAVA_CHAIN_ID
 
 # download genesis and addrbook
-curl -s https://raw.githubusercontent.com/lavanet/lava-config/main/testnet-2/genesis_json/genesis.json > $HOME/.lava/config/genesis.json
-curl -s https://snapshots1-testnet.nodejumper.io/lava-testnet/addrbook.json > $HOME/.lava/config/addrbook.json
+curl -L https://snapshots-testnet.nodejumper.io/lava-testnet/genesis.json > $HOME/.lava/config/genesis.json
+curl -L https://snapshots-testnet.nodejumper.io/lava-testnet/addrbook.json > $HOME/.lava/config/addrbook.json
 
 # set minimum gas price
-sed -i -e "s/^minimum-gas-prices *=.*/minimum-gas-prices = \"0ulava\"/" $HOME/.lava/config/app.toml
+sed -i -e "s/^minimum-gas-prices *=.*/minimum-gas-prices = \"0.000000001ulava\"/" $HOME/.lava/config/app.toml
 
 # set peers and seeds
-SEEDS="3a445bfdbe2d0c8ee82461633aa3af31bc2b4dc0@testnet2-seed-node.lavanet.xyz:26656,e593c7a9ca61f5616119d6beb5bd8ef5dd28d62d@testnet2-seed-node2.lavanet.xyz:26656"
-PEERS="f6a3fcd1910ab808192c4c40a29fa0e85cd874cd@35.205.44.215:26656,525696e557db51c4d5f5bca1d7152753c7426c2e@34.74.59.43:26656,f0758765ef0350d5cbbdeebf0b8e84f76e21c46d@34.148.73.227:26656,ac7cefeff026e1c616035a49f3b00c78da63c2e9@104.196.5.23:26656,51aeaa2c757989f720c904023c2dbedfc720f75e@23.88.5.169:27656,c58181fa2022022a36ddda08b79c5b666cb45a7d@194.34.232.225:17656,5e068fccd370b2f2e5ab4240a304323af6385f1f@172.93.110.154:27656,47385d0a7051109de5342e3b27890c4a4b9e0763@65.108.72.233:16656,5a3293c04ed8cf022e2c04d6d85db60a5c6abdc3@52.37.107.186:26656,39b3929bf87e8501797c6c7cb44833953f1d96a0@65.108.206.118:60956"
+SEEDS=""
+PEERS="706fc0f682c33ab8deb0aa84c797dc2d1d0119b4@109.123.241.222:26656,53ff7a2726de241c87e2260ad715dadc75977974@65.108.227.112:13656,8da51a920e2e402a6084d241d79301066b20f962@84.247.179.136:26656,9872ab6a76199fcbeca1f7f791755e726aa97686@65.21.141.117:26656,6a45a044922040a2a9f7ba4febffa956cdd9f307@144.76.202.120:60856"
 sed -i -e "s/^seeds *=.*/seeds = \"$SEEDS\"/; s/^persistent_peers *=.*/persistent_peers = \"$PEERS\"/" $HOME/.lava/config/config.toml
 
 # config pruning
@@ -123,19 +120,19 @@ sed -i \
 # create service
 sudo tee /etc/systemd/system/lavad.service > /dev/null << EOF
 [Unit]
-Description=Lava Network Node
+Description=Lava node service
 After=network-online.target
 [Service]
 User=$USER
 ExecStart=$(which lavad) start
 Restart=on-failure
 RestartSec=10
-LimitNOFILE=10000
+LimitNOFILE=65535
 [Install]
 WantedBy=multi-user.target
 EOF
 
-lavad tendermint unsafe-reset-all --home $HOME/.lava --keep-addr-book 
+lavad tendermint unsafe-reset-all --home $HOME/.lava --keep-addr-book
 curl https://snapshots-testnet.nodejumper.io/lava-testnet/lava-testnet_latest.tar.lz4 | lz4 -dc - | tar -xf - -C $HOME/.lava
 
 # start service
@@ -162,16 +159,17 @@ break
 
 "Create Validator")
 lavad tx staking create-validator \
-  --amount 10000ulava \
-  --from wallet \
-  --commission-max-change-rate "0.1" \
-  --commission-max-rate "0.2" \
-  --commission-rate "0.1" \
-  --min-self-delegation "1" \
-  --pubkey  $(lavad tendermint show-validator) \
-  --moniker $NODENAME \
-  --chain-id lava-testnet-1 \
-  -y
+--amount=1000000ulava \
+--pubkey=$(lavad tendermint show-validator) \
+--moniker=$NODENAME \
+--chain-id=lava-testnet-2 \
+--commission-rate=0.10 \
+--commission-max-rate=0.20 \
+--commission-max-change-rate=0.01 \
+--min-self-delegation=1 \
+--from=wallet \
+--gas=auto \
+-y 
   
 break
 ;;
