@@ -72,6 +72,7 @@ cd && rm -rf lava
 git clone https://github.com/lavanet/lava
 cd lava
 git checkout v0.35.0
+make install
 
 # config
 lavad config chain-id $LAVA_CHAIN_ID
