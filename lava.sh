@@ -71,7 +71,7 @@ fi
 cd && rm -rf lava
 git clone https://github.com/lavanet/lava
 cd lava
-git checkout v0.35.0
+git checkout v1.0.1
 make install
 
 # config
